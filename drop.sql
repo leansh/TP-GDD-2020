@@ -1,4 +1,4 @@
-USE GD1C2020
+﻿USE GD1C2020
 GO
 drop table CUARENTENA2020.Estadia_X_Habitacion
 drop table CUARENTENA2020.VentaEstadia
@@ -11,8 +11,8 @@ drop table CUARENTENA2020.Habitacion
 drop table CUARENTENA2020.Venta
 drop table CUARENTENA2020.CompraPasaje
 drop table CUARENTENA2020.Vuelo 
+drop table CUARENTENA2020.Venta
 drop table CUARENTENA2020.Cliente
-drop table CUARENTENA2020.Factura
 drop table CUARENTENA2020.Compra
 drop table CUARENTENA2020.Avion 
 drop table CUARENTENA2020.Ruta 
