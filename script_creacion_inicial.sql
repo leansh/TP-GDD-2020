@@ -64,7 +64,7 @@ BEGIN
     
     INSERT INTO CUARENTENA2020.Ruta 
 		SELECT DISTINCT 
-			RUTA_AEREA_CODIGO,-
+			RUTA_AEREA_CODIGO,
 			(SELECT ciudad_id from CUARENTENA2020.Ciudad where ciudad_nombre = RUTA_AEREA_CIU_ORIG),
 			(SELECT ciudad_id from CUARENTENA2020.Ciudad where ciudad_nombre = RUTA_AEREA_CIU_DEST) 
 		FROM gd_esquema.Maestra WHERE RUTA_AEREA_CODIGO IS NOT NULL
