@@ -83,10 +83,13 @@ BEGIN
         compra_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
         compra_numero DECIMAL(18, 0) NOT NULL,
         compra_fecha DATETIME2(3) NULL,
-        id_empresa INT NULL REFERENCES CUARENTENA2020.Empresa,
+        empresa_id INT NULL REFERENCES CUARENTENA2020.Empresa,
     )
 
-    INSERT INTO CUARENTENA2020.Compra SELECT DISTINCT COMPRA_NUMERO,COMPRA_FECHA, SUCURSAL_DIR FROM gd_esquema.Maestra
+    INSERT INTO CUARENTENA2020.Compra 
+		SELECT DISTINCT COMPRA_NUMERO, COMPRA_FECHA, e.empresa_id
+		FROM gd_esquema.Maestra m
+		join CUARENTENA2020.Empresa e on e.empresa_razon_social = m.EMPRESA_RAZON_SOCIAL
     
     CREATE TABLE CUARENTENA2020.Factura(
         factura_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
