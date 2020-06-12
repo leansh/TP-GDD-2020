@@ -260,14 +260,28 @@ BEGIN
     
 	CREATE TABLE CUARENTENA2020.Estadia(
 		estadia_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
-		estadia_codigo DECIMAL(18,0),
 		estadia_cantidad_noches DECIMAL(18,0) NULL,
 		estadia_fecha_ini DATETIME2(3) NULL,
-		id_hotel INT REFERENCES CUARENTENA2020.Hotel,
-		id_habitacion INT REFERENCES CUARENTENA2020.Habitacion
+		id_hotel INT REFERENCES CUARENTENA2020.Hotel
 	)
     
-	INSERT INTO CUARENTENA2020.Estadia SELECT ESTADIA_CODIGO,ESTADIA_CANTIDAD_NOCHES,ESTADIA_FECHA_INI FROM gd_esquema.Maestra
+	SET IDENTITY_INSERT CUARENTENA2020.Estadia ON
+	INSERT INTO CUARENTENA2020.Estadia
+		(
+			estadia_id,
+			estadia_cantidad_noches,
+			estadia_fecha_ini,
+			id_hotel
+		)
+		SELECT distinct
+			ESTADIA_CODIGO,
+			ESTADIA_CANTIDAD_NOCHES,
+			ESTADIA_FECHA_INI,
+			h.hotel_id
+		FROM gd_esquema.Maestra m
+		join cuarentena2020.Hotel h on h.hotel_calle = m.HOTEL_CALLE and h.hotel_nro_calle = m.HOTEL_NRO_CALLE
+		where ESTADIA_CODIGO is not null
+	SET IDENTITY_INSERT CUARENTENA2020.Estadia OFF
 ----------------------------------------------------------------------------------------    
 	CREATE TABLE CUARENTENA2020.Butaca (
 		butaca_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
