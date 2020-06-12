@@ -346,8 +346,24 @@ BEGIN
 ----------------------------------------------------------------------------------------
 	CREATE TABLE CUARENTENA2020.CompraEstadia(
 		compra_estadia_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
-		id_estadia INT REFERENCES CUARENTENA2020.Estadia
+		compra_estadia_codigo INT REFERENCES CUARENTENA2020.Estadia
 	)
+	SET IDENTITY_INSERT CUARENTENA2020.CompraEstadia ON
+	insert into CUARENTENA2020.CompraEstadia
+		(
+			compra_estadia_id,
+			compra_estadia_codigo
+		)
+		select distinct 
+			COMPRA_NUMERO, 
+			ESTADIA_CODIGO
+		from gd_esquema.Maestra
+		where 
+			COMPRA_NUMERO is not null 
+			and ESTADIA_CODIGO is not null
+	SET IDENTITY_INSERT CUARENTENA2020.CompraEstadia OFF
+
+----------------------------------------------------------------------------------------
     
 	CREATE TABLE CUARENTENA2020.VentaEstadia(
 		id_ven_est INT PRIMARY KEY NOT NULL IDENTITY(1,1),
