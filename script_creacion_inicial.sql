@@ -12,7 +12,7 @@ BEGIN
 END
 GO
 
-ALTER PROCEDURE [dbo].[pr_crear_tablas] 
+CREATE PROCEDURE pr_generar_base_de_datos_normalizada
 AS
 
 BEGIN
@@ -414,10 +414,26 @@ CREATE INDEX index_Cliente
 ON [CUARENTENA2020].[Cliente] (cliente_dni , cliente_mail)
 GO
 
-CREATE INDEX index_empresa
-ON [CUARENTENA2020].[empresa] (empresa_razon_social)
+CREATE INDEX index_hotel
+ON [CUARENTENA2020].[Hotel] (hotel_cantidad_estrellas)
 GO
 
-CREATE INDEX index_hotel
-ON [CUARENTENA2020].[hotel] (hotel_cantidad_estrellas)
+CREATE INDEX index_sucursal
+ON [CUARENTENA2020].[Sucursal] (sucursal_telefono)
+GO
+
+CREATE INDEX index_ruta_aerea
+ON [CUARENTENA2020].[Ruta] (ruta_aerea_codigo)
+GO
+
+CREATE INDEX index_vuelo
+ON [CUARENTENA2020].[Vuelo] (vuelo_codigo)
+GO
+
+CREATE INDEX index_estadia
+ON [CUARENTENA2020].[Estadia] (estadia_codigo)
+GO
+
+CREATE INDEX index_pasaje
+ON [CUARENTENA2020].[Pasaje] (pasaje_codigo)
 GO
