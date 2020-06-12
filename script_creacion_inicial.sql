@@ -6,9 +6,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-IF OBJECT_ID('pr_crear_tablas') IS NULL
+IF OBJECT_ID('pr_generar_base_de_datos_normalizada') IS NULL
 BEGIN
-	EXEC('CREATE PROCEDURE pr_crear_tablas AS SET NOCOUNT ON;')
+	EXEC('CREATE PROCEDURE pr_generar_base_de_datos_normalizada AS SET NOCOUNT ON;')
 END
 GO
 
@@ -401,7 +401,7 @@ BEGIN
 END
 GO
 
-EXEC pr_crear_tablas;
+EXEC pr_generar_base_de_datos_normalizada;
 GO
 
 --Indices 
