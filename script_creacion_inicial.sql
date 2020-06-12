@@ -295,3 +295,22 @@ GO
 
 EXEC pr_crear_tablas;
 go
+------------------------------------------------------------------------------------------
+--Indices 
+
+CREATE INDEX index_avion 
+ON [CUARENTENA2020].[Avion] (avion_id , avion_identificador)
+GO
+
+CREATE INDEX index_Cliente 
+ON [CUARENTENA2020].[Cliente] (cliente_dni , cliente_mail)
+GO
+
+CREATE INDEX index_empresa
+ON [CUARENTENA2020].[empresa] (empresa_razon_social)
+GO
+
+CREATE INDEX index_hotel
+ON [CUARENTENA2020].[hotel] (hotel_cantidad_estrellas)
+GO
+
