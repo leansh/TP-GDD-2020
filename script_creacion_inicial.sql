@@ -12,7 +12,7 @@ BEGIN
 END
 GO
 
-CREATE PROCEDURE pr_generar_base_de_datos_normalizada
+ALTER PROCEDURE pr_generar_base_de_datos_normalizada
 AS
 
 BEGIN
