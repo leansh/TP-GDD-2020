@@ -164,7 +164,7 @@ BEGIN
 ----------------------------------------------------------------------------------------
     
 	CREATE TABLE CUARENTENA2020.Vuelo (
-		vuelo_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
+		vuelo_codigo INT PRIMARY KEY NOT NULL IDENTITY(1,1),
 		vuelo_fecha_salida DATETIME2(3) NOT NULL,
 		vuelo_fecha_llegada DATETIME2(3) NOT NULL,
 		vuelo_ruta INT,
@@ -174,7 +174,7 @@ BEGIN
 	SET IDENTITY_INSERT CUARENTENA2020.Vuelo ON
 	INSERT INTO CUARENTENA2020.Vuelo
 		(
-			vuelo_id,
+			vuelo_codigo,
 			vuelo_fecha_salida ,
 			vuelo_fecha_llegada,
 			vuelo_ruta,
@@ -259,7 +259,7 @@ BEGIN
 ----------------------------------------------------------------------------------------
     
 	CREATE TABLE CUARENTENA2020.Estadia(
-		estadia_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
+		estadia_codigo INT PRIMARY KEY NOT NULL IDENTITY(1,1),
 		estadia_cantidad_noches DECIMAL(18,0) NULL,
 		estadia_fecha_ini DATETIME2(3) NULL,
 		id_hotel INT REFERENCES CUARENTENA2020.Hotel
@@ -268,7 +268,7 @@ BEGIN
 	SET IDENTITY_INSERT CUARENTENA2020.Estadia ON
 	INSERT INTO CUARENTENA2020.Estadia
 		(
-			estadia_id,
+			estadia_codigo,
 			estadia_cantidad_noches,
 			estadia_fecha_ini,
 			id_hotel
