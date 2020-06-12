@@ -295,7 +295,7 @@ BEGIN
 ----------------------------------------------------------------------------------------    
 	CREATE TABLE CUARENTENA2020.Butaca (
 		butaca_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
-		BUTACA_NUMERO DECIMAL(18, 0),
+		butaca_numero DECIMAL(18, 0),
 		butaca_avion INT REFERENCES CUARENTENA2020.Avion,
 		butaca_tipo INT REFERENCES CUARENTENA2020.TipoButaca
 	)
@@ -308,17 +308,27 @@ BEGIN
 		FROM gd_esquema.Maestra m
 		join CUARENTENA2020.Avion a on a.avion_identificador = m.AVION_IDENTIFICADOR
 		join CUARENTENA2020.TipoButaca tb on tb.tipo_butaca_descripcion = m.BUTACA_TIPO
+
 ----------------------------------------------------------------------------------------    
 	CREATE TABLE CUARENTENA2020.Pasaje(
 		pasaje_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
 		pasaje_codigo DECIMAL(18, 0) NOT NULL,
 		pasaje_costo DECIMAL(18, 2) NOT NULL,
 		pasaje_precio DECIMAL(18, 2) NOT NULL,
-		compra_id INT REFERENCES CUARENTENA2020.CompraPasaje,
-		butaca_id INT REFERENCES CUARENTENA2020.Butaca
-		)
+		pasaje_compra_id INT REFERENCES CUARENTENA2020.CompraPasaje,
+		pasaje_butaca_nro INT
+	)
      
-		INSERT INTO CUARENTENA2020.Pasaje SELECT PASAJE_CODIGO,PASAJE_COSTO,PASAJE_PRECIO FROM gd_esquema.Maestra
+	INSERT INTO CUARENTENA2020.Pasaje 
+		SELECT distinct
+			PASAJE_CODIGO,
+			PASAJE_COSTO,
+			PASAJE_PRECIO,
+			COMPRA_NUMERO,
+			BUTACA_NUMERO
+		FROM gd_esquema.Maestra m
+		where PASAJE_CODIGO is not null
+
 ----------------------------------------------------------------------------------------    
 	CREATE TABLE CUARENTENA2020.VentaPasaje(
 		id_ven_pas INT PRIMARY KEY NOT NULL IDENTITY(1,1),
