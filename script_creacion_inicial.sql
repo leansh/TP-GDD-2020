@@ -231,7 +231,7 @@ BEGIN
 ----------------------------------------------------------------------------------------
 	CREATE TABLE CUARENTENA2020.Habitacion(
 		habitacion_id INT PRIMARY KEY NOT NULL IDENTITY(1,1), 
-		--habitacion_hotel INT REFERENCES CUARENTENA2020.Hotel,
+		habitacion_hotel INT REFERENCES CUARENTENA2020.Hotel,
 		habitacion_numero DECIMAL(18,0) NOT NULL,
 		habitacion_piso DECIMAL(18,0) NOT NULL,
 		habitacion_frente NVARCHAR(50) NOT NULL,
@@ -240,8 +240,10 @@ BEGIN
 		habitacion_tipo INT REFERENCES CUARENTENA2020.TipoHabitacion
 	)
     
+
 	INSERT INTO CUARENTENA2020.Habitacion
 		SELECT distinct
+			h.hotel_id,
 			HABITACION_NUMERO,
 			HABITACION_PISO,
 			HABITACION_FRENTE,
@@ -253,6 +255,7 @@ BEGIN
 		where 
 			HABITACION_NUMERO is not null
 			and h.hotel_id is not null
+
 ----------------------------------------------------------------------------------------
     
 	CREATE TABLE CUARENTENA2020.Estadia(
