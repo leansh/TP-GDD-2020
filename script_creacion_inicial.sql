@@ -60,8 +60,14 @@ BEGIN
 		ruta_aerea_ciu_orig INT,
 		ruta_aerea_ciu_dest INT
 	)
+
     SET IDENTITY_INSERT CUARENTENA2020.Ruta ON
     INSERT INTO CUARENTENA2020.Ruta 
+		(
+			ruta_aerea_codigo,
+			ruta_aerea_ciu_orig,
+			ruta_aerea_ciu_dest 
+		)
 		SELECT DISTINCT 
 			RUTA_AEREA_CODIGO,
 			(SELECT ciudad_id from CUARENTENA2020.Ciudad where ciudad_nombre = RUTA_AEREA_CIU_ORIG),
@@ -89,6 +95,11 @@ BEGIN
 
 	SET IDENTITY_INSERT CUARENTENA2020.Compra ON
     INSERT INTO CUARENTENA2020.Compra 
+		(
+			compra_id,
+			compra_fecha,
+			compra_empresa 
+		)
 		SELECT DISTINCT 
 			COMPRA_NUMERO, 
 			COMPRA_FECHA, 
@@ -121,6 +132,12 @@ BEGIN
 
 	SET IDENTITY_INSERT CUARENTENA2020.Venta ON
     INSERT INTO CUARENTENA2020.Venta 
+		(
+			venta_id,
+			venta_fecha,
+			venta_cliente,
+			venta_sucursal
+		)
 		SELECT distinct 
 			FACTURA_NRO,
 			FACTURA_FECHA,
@@ -137,12 +154,19 @@ BEGIN
         vuelo_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
         vuelo_fecha_salida DATETIME2(3) NOT NULL,
         vuelo_fecha_llegada DATETIME2(3) NOT NULL,
-        id_ruta INT REFERENCES CUARENTENA2020.Ruta,
-        id_avion INT REFERENCES CUARENTENA2020.Avion
+        vuelo_ruta INT REFERENCES CUARENTENA2020.Ruta,
+        vuelo_avion INT REFERENCES CUARENTENA2020.Avion
     )
 
 	SET IDENTITY_INSERT CUARENTENA2020.Vuelo ON
-    INSERT INTO CUARENTENA2020.Vuelo 
+    INSERT INTO CUARENTENA2020.Vuelo
+		(
+			vuelo_id,
+			vuelo_fecha_salida ,
+			vuelo_fecha_llegada,
+			vuelo_ruta,
+			vuelo_avion
+		)
 		SELECT distinct
 			VUELO_CODIGO,
 			VUELO_FECHA_SALUDA,
@@ -156,7 +180,7 @@ BEGIN
 ----------------------------------------------------------------------------------------
     CREATE TABLE CUARENTENA2020.CompraPasaje(
         compra_pasaje_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
-        vuelo_id INT REFERENCES CUARENTENA2020.Vuelo
+        compra_pasaje_vuelo INT REFERENCES CUARENTENA2020.Vuelo
     )
 
 	SET IDENTITY_INSERT CUARENTENA2020.CompraPasaje ON
@@ -169,9 +193,25 @@ BEGIN
 			COMPRA_NUMERO is not null 
 			and VUELO_CODIGO is not null
 	SET IDENTITY_INSERT CUARENTENA2020.CompraPasaje OFF
-----------------------------------------------------------------------------------------		
-		
-    
+----------------------------------------------------------------------------------------
+	CREATE TABLE CUARENTENA2020.TipoHabitacion(
+        tipo_habitacion_codigo INT PRIMARY KEY NOT NULL IDENTITY(1,1),  
+        tipo_habitacion_desc NVARCHAR(50) NULL,
+    )
+
+    SET IDENTITY_INSERT CUARENTENA2020.TipoHabitacion ON
+    INSERT INTO CUARENTENA2020.TipoHabitacion 
+		(
+			tipo_habitacion_codigo, 
+			tipo_habitacion_desc
+		)
+		SELECT distinct
+			TIPO_HABITACION_CODIGO,
+			TIPO_HABITACION_DESC 
+		FROM gd_esquema.Maestra
+		where TIPO_HABITACION_CODIGO is not null
+	SET IDENTITY_INSERT CUARENTENA2020.TipoHabitacion OFF
+----------------------------------------------------------------------------------------
     CREATE TABLE CUARENTENA2020.Habitacion(
         habitacion_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),    
         habitacion_numero DECIMAL(18,0) NULL,
@@ -179,12 +219,21 @@ BEGIN
         habitacion_frente NVARCHAR(50) NULL,
         habitacion_costo DECIMAL(18,2) NULL,
         habitacion_precio DECIMAL(18,2) NULL,
-        tipo_habitacion_codigo DECIMAL(18,0) NULL,
-        tipo_habitacion_desc NVARCHAR(50) NULL,
+        habitacion_tipo INT REFERENCES CUARENTENA2020.TipoHabitacion,
         hotel_id INT REFERENCES CUARENTENA2020.Hotel
     )
     
-    INSERT INTO CUARENTENA2020.Habitacion SELECT HABITACION_NUMERO,HABITACION_PISO,HABITACION_FRENTE,HABITACION_COSTO,HABITACION_PRECIO,TIPO_HABITACION_CODIGO,TIPO_HABITACION_DESC FROM gd_esquema.Maestra
+    INSERT INTO CUARENTENA2020.Habitacion 
+		SELECT 
+			HABITACION_NUMERO,
+			HABITACION_PISO,
+			HABITACION_FRENTE,
+			HABITACION_COSTO,
+			HABITACION_PRECIO,
+			TIPO_HABITACION_CODIGO,
+			TIPO_HABITACION_DESC 
+		FROM gd_esquema.Maestra
+		where HABITACION_NUMERO is not null
 ----------------------------------------------------------------------------------------
     
     CREATE TABLE CUARENTENA2020.Estadia(
