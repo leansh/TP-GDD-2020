@@ -5,7 +5,8 @@ drop table CUARENTENA2020.VentaEstadia
 drop table CUARENTENA2020.CompraEstadia
 drop table CUARENTENA2020.VentaPasaje
 drop table CUARENTENA2020.Pasaje
-drop table CUARENTENA2020.Butaca 
+drop table CUARENTENA2020.Butaca
+drop table CUARENTENA2020.TipoButaca 
 drop table CUARENTENA2020.Estadia
 drop table CUARENTENA2020.Habitacion
 drop table CUARENTENA2020.TipoHabitacion

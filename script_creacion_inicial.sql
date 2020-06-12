@@ -283,14 +283,31 @@ BEGIN
 		where ESTADIA_CODIGO is not null
 	SET IDENTITY_INSERT CUARENTENA2020.Estadia OFF
 ----------------------------------------------------------------------------------------    
+	CREATE TABLE CUARENTENA2020.TipoButaca (
+		tipo_butaca_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
+		tipo_butaca_descripcion nvarchar(255) NOT NULL
+	)
+
+	INSERT INTO CUARENTENA2020.TipoButaca 
+		SELECT distinct BUTACA_TIPO 
+		FROM gd_esquema.Maestra
+		where BUTACA_TIPO is not null
+----------------------------------------------------------------------------------------    
 	CREATE TABLE CUARENTENA2020.Butaca (
 		butaca_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
 		BUTACA_NUMERO DECIMAL(18, 0),
-		ID_avion INT REFERENCES CUARENTENA2020.Avion,
-		BUTACA_TIPO nvarchar(255) NOT NULL
-		)
+		butaca_avion INT REFERENCES CUARENTENA2020.Avion,
+		butaca_tipo INT REFERENCES CUARENTENA2020.TipoButaca
+	)
 
-	INSERT INTO CUARENTENA2020.Butaca SELECT BUTACA_NUMERO,BUTACA_TIPO FROM gd_esquema.Maestra
+	INSERT INTO CUARENTENA2020.Butaca 
+		SELECT distinct 
+			BUTACA_NUMERO,
+			a.avion_id,
+			tb.tipo_butaca_id
+		FROM gd_esquema.Maestra m
+		join CUARENTENA2020.Avion a on a.avion_identificador = m.AVION_IDENTIFICADOR
+		join CUARENTENA2020.TipoButaca tb on tb.tipo_butaca_descripcion = m.BUTACA_TIPO
 ----------------------------------------------------------------------------------------    
 	CREATE TABLE CUARENTENA2020.Pasaje(
 		pasaje_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
