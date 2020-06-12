@@ -20,7 +20,7 @@ BEGIN
     BEGIN
         EXEC ('CREATE SCHEMA [CUARENTENA2020] AUTHORIZATION [dbo]')
     END
-    
+----------------------------------------------------------------------------------------    
     CREATE TABLE CUARENTENA2020.Sucursal(
         sucursal_id INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
         sucursal_dir NVARCHAR(255) NULL,
@@ -29,14 +29,14 @@ BEGIN
     )
 
     INSERT INTO CUARENTENA2020.Sucursal SELECT DISTINCT SUCURSAL_DIR,SUCURSAL_MAIL,SUCURSAL_TELEFONO FROM gd_esquema.Maestra WHERE SUCURSAL_DIR IS NOT NULL
-
+----------------------------------------------------------------------------------------
     CREATE TABLE CUARENTENA2020.Empresa (
         empresa_id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
         empresa_razon_social nvarchar(255) NOT NULL,
     )
 
     INSERT INTO CUARENTENA2020.Empresa SELECT DISTINCT EMPRESA_RAZON_SOCIAL FROM gd_esquema.Maestra
-        
+----------------------------------------------------------------------------------------        
     CREATE TABLE CUARENTENA2020.Hotel (
         hotel_id INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
         hotel_calle nvarchar(50),
@@ -45,7 +45,7 @@ BEGIN
      )
 
     INSERT INTO CUARENTENA2020.Hotel SELECT DISTINCT HOTEL_CALLE,HOTEL_CANTIDAD_ESTRELLAS,HOTEL_NRO_CALLE FROM gd_esquema.Maestra WHERE HOTEL_CALLE IS NOT NULL
-    
+----------------------------------------------------------------------------------------    
 	CREATE TABLE CUARENTENA2020.Ciudad (
 		ciudad_id INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
 		ciudad_nombre nvarchar(255)
@@ -54,7 +54,7 @@ BEGIN
 		SELECT DISTINCT RUTA_AEREA_CIU_ORIG FROM gd_esquema.Maestra WHERE RUTA_AEREA_CIU_ORIG IS NOT NULL
 		UNION
 		SELECT DISTINCT RUTA_AEREA_CIU_DEST FROM gd_esquema.Maestra WHERE RUTA_AEREA_CIU_DEST IS NOT NULL
-	
+----------------------------------------------------------------------------------------	
 	CREATE TABLE CUARENTENA2020.Ruta (
 		ruta_aerea_codigo INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
 		ruta_aerea_ciu_orig INT,
@@ -69,7 +69,7 @@ BEGIN
 		FROM gd_esquema.Maestra 
 		WHERE RUTA_AEREA_CODIGO IS NOT NULL
 	SET IDENTITY_INSERT CUARENTENA2020.Ruta OFF
-
+----------------------------------------------------------------------------------------
     CREATE TABLE CUARENTENA2020.Avion (
         avion_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
         avion_identificador nvarchar(50),    
@@ -80,20 +80,24 @@ BEGIN
 		SELECT DISTINCT AVION_IDENTIFICADOR,AVION_MODELO 
 		FROM gd_esquema.Maestra 
 		WHERE AVION_IDENTIFICADOR IS NOT NULL
-
+----------------------------------------------------------------------------------------
     CREATE TABLE CUARENTENA2020.Compra(
         compra_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
-        compra_numero DECIMAL(18, 0) NOT NULL,
         compra_fecha DATETIME2(3) NULL,
-        empresa_id INT NULL REFERENCES CUARENTENA2020.Empresa,
+        compra_empresa INT NULL REFERENCES CUARENTENA2020.Empresa,
     )
 
+	SET IDENTITY_INSERT CUARENTENA2020.Compra ON
     INSERT INTO CUARENTENA2020.Compra 
-		SELECT DISTINCT COMPRA_NUMERO, COMPRA_FECHA, e.empresa_id
+		SELECT DISTINCT 
+			COMPRA_NUMERO, 
+			COMPRA_FECHA, 
+			e.empresa_id
 		FROM gd_esquema.Maestra m
 		join CUARENTENA2020.Empresa e on e.empresa_razon_social = m.EMPRESA_RAZON_SOCIAL
 		where COMPRA_NUMERO is not null
-    
+	SET IDENTITY_INSERT CUARENTENA2020.Compra OFF
+----------------------------------------------------------------------------------------    
 	CREATE TABLE CUARENTENA2020.Cliente(
         cliente_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
         cliente_apellido NVARCHAR(255) NULL,
@@ -107,7 +111,7 @@ BEGIN
 		SELECT DISTINCT CLIENTE_APELLIDO,CLIENTE_NOMBRE,CLIENTE_DNI,CLIENTE_FECHA_NAC,CLIENTE_MAIL,CLIENTE_TELEFONO 
 		FROM gd_esquema.Maestra
 		where CLIENTE_DNI is not null
-
+----------------------------------------------------------------------------------------
     CREATE TABLE CUARENTENA2020.Venta(
 	    venta_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
 		venta_fecha DATETIME2(3),
@@ -127,7 +131,7 @@ BEGIN
 		join CUARENTENA2020.Sucursal s on s.sucursal_dir = m.SUCURSAL_DIR
 		where FACTURA_NRO is not null
 	SET IDENTITY_INSERT CUARENTENA2020.Venta OFF
-
+----------------------------------------------------------------------------------------
     
     CREATE TABLE CUARENTENA2020.Vuelo (
         vuelo_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
@@ -149,12 +153,24 @@ BEGIN
 		join CUARENTENA2020.Avion a on a.avion_identificador = m.AVION_IDENTIFICADOR
 		where VUELO_CODIGO is not null
 	SET IDENTITY_INSERT CUARENTENA2020.Vuelo OFF
-
+----------------------------------------------------------------------------------------
     CREATE TABLE CUARENTENA2020.CompraPasaje(
-        compraPasaje_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
-        empresa_id INT REFERENCES CUARENTENA2020.Empresa,
+        compra_pasaje_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
         vuelo_id INT REFERENCES CUARENTENA2020.Vuelo
     )
+
+	SET IDENTITY_INSERT CUARENTENA2020.CompraPasaje ON
+	insert into CUARENTENA2020.CompraPasaje
+		select distinct 
+			COMPRA_NUMERO, 
+			VUELO_CODIGO
+		from gd_esquema.Maestra
+		where 
+			COMPRA_NUMERO is not null 
+			and VUELO_CODIGO is not null
+	SET IDENTITY_INSERT CUARENTENA2020.CompraPasaje OFF
+----------------------------------------------------------------------------------------		
+		
     
     CREATE TABLE CUARENTENA2020.Habitacion(
         habitacion_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),    
@@ -169,7 +185,7 @@ BEGIN
     )
     
     INSERT INTO CUARENTENA2020.Habitacion SELECT HABITACION_NUMERO,HABITACION_PISO,HABITACION_FRENTE,HABITACION_COSTO,HABITACION_PRECIO,TIPO_HABITACION_CODIGO,TIPO_HABITACION_DESC FROM gd_esquema.Maestra
-
+----------------------------------------------------------------------------------------
     
     CREATE TABLE CUARENTENA2020.Estadia(
         estadia_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
@@ -181,7 +197,7 @@ BEGIN
     )
     
     INSERT INTO CUARENTENA2020.Estadia SELECT ESTADIA_CODIGO,ESTADIA_CANTIDAD_NOCHES,ESTADIA_FECHA_INI FROM gd_esquema.Maestra
-    
+----------------------------------------------------------------------------------------    
     CREATE TABLE CUARENTENA2020.Butaca (
         butaca_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
         BUTACA_NUMERO DECIMAL(18, 0),
@@ -190,7 +206,7 @@ BEGIN
      )
 
     INSERT INTO CUARENTENA2020.Butaca SELECT BUTACA_NUMERO,BUTACA_TIPO FROM gd_esquema.Maestra
-    
+----------------------------------------------------------------------------------------    
     CREATE TABLE CUARENTENA2020.Pasaje(
         pasaje_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
         pasaje_codigo DECIMAL(18, 0) NOT NULL,
@@ -201,7 +217,7 @@ BEGIN
      )
      
      INSERT INTO CUARENTENA2020.Pasaje SELECT PASAJE_CODIGO,PASAJE_COSTO,PASAJE_PRECIO FROM gd_esquema.Maestra
-    
+----------------------------------------------------------------------------------------    
     CREATE TABLE CUARENTENA2020.VentaPasaje(
         id_ven_pas INT PRIMARY KEY NOT NULL IDENTITY(1,1),
         precio DECIMAL(18,2),
