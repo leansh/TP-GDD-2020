@@ -146,11 +146,15 @@ BEGIN
 			c.cliente_id,
 			s.sucursal_id
 		FROM gd_esquema.Maestra m
-		join CUARENTENA2020.Cliente c on c.cliente_dni = m.CLIENTE_DNI
+		join CUARENTENA2020.Cliente c on c.cliente_dni = m.CLIENTE_DNI and c.cliente_fecha_nac = m.CLIENTE_FECHA_NAC
 		join CUARENTENA2020.Sucursal s on s.sucursal_dir = m.SUCURSAL_DIR
 		where FACTURA_NRO is not null
 
 	SET IDENTITY_INSERT CUARENTENA2020.Venta OFF
+
+	/*
+		Aca use dni y fecha de nacimiento porque el dni no es unico
+	*/
 ----------------------------------------------------------------------------------------
     
     CREATE TABLE CUARENTENA2020.Vuelo (
