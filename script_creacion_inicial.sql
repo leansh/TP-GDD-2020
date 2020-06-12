@@ -366,11 +366,19 @@ BEGIN
 ----------------------------------------------------------------------------------------
     
 	CREATE TABLE CUARENTENA2020.VentaEstadia(
-		id_ven_est INT PRIMARY KEY NOT NULL IDENTITY(1,1),
-		precio DECIMAL(18,2),
 		id_com_est INT REFERENCES CUARENTENA2020.CompraEstadia,
 		id_venta INT REFERENCES CUARENTENA2020.Venta
 	)
+	insert into CUARENTENA2020.VentaEstadia
+		select distinct
+			COMPRA_NUMERO,
+			FACTURA_NRO
+		from gd_esquema.Maestra m
+		join CUARENTENA2020.CompraEstadia ce on ce.compra_estadia_id = m.COMPRA_NUMERO
+		where COMPRA_NUMERO is not null and FACTURA_NRO is not null
+
+
+----------------------------------------------------------------------------------------
     
 	CREATE TABLE CUARENTENA2020.Estadia_X_Habitacion(
 		id_habitacion INT REFERENCES CUARENTENA2020.Habitacion,
