@@ -16,7 +16,9 @@ drop table CUARENTENA2020.Venta
 drop table CUARENTENA2020.Cliente
 drop table CUARENTENA2020.Compra
 drop table CUARENTENA2020.Avion 
-drop table CUARENTENA2020.Ruta 
+drop table CUARENTENA2020.Ruta
+drop table CUARENTENA2020.Ciudad 
 drop table CUARENTENA2020.Hotel 
 drop table CUARENTENA2020.Empresa 
 drop table CUARENTENA2020.Sucursal
+drop schema CUARENTENA2020

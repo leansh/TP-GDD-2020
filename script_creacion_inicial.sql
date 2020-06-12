@@ -44,7 +44,13 @@ BEGIN
         hotel_cantidad_estrellas DECIMAL(18, 0),
      )
 
-    INSERT INTO CUARENTENA2020.Hotel SELECT DISTINCT HOTEL_CALLE,HOTEL_CANTIDAD_ESTRELLAS,HOTEL_NRO_CALLE FROM gd_esquema.Maestra WHERE HOTEL_CALLE IS NOT NULL
+    INSERT INTO CUARENTENA2020.Hotel 
+		SELECT DISTINCT 
+			HOTEL_CALLE,
+			HOTEL_NRO_CALLE,
+			HOTEL_CANTIDAD_ESTRELLAS 
+		FROM gd_esquema.Maestra 
+		WHERE HOTEL_CALLE IS NOT NULL
 ----------------------------------------------------------------------------------------    
 	CREATE TABLE CUARENTENA2020.Ciudad (
 		ciudad_id INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
@@ -56,25 +62,21 @@ BEGIN
 		SELECT DISTINCT RUTA_AEREA_CIU_DEST FROM gd_esquema.Maestra WHERE RUTA_AEREA_CIU_DEST IS NOT NULL
 ----------------------------------------------------------------------------------------	
 	CREATE TABLE CUARENTENA2020.Ruta (
-		ruta_aerea_codigo INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
+		ruta_aerea_id INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
+		ruta_aerea_codigo INT NOT NULL,
 		ruta_aerea_ciu_orig INT,
 		ruta_aerea_ciu_dest INT
 	)
 
-    SET IDENTITY_INSERT CUARENTENA2020.Ruta ON
     INSERT INTO CUARENTENA2020.Ruta 
-		(
-			ruta_aerea_codigo,
-			ruta_aerea_ciu_orig,
-			ruta_aerea_ciu_dest 
-		)
 		SELECT DISTINCT 
 			RUTA_AEREA_CODIGO,
 			(SELECT ciudad_id from CUARENTENA2020.Ciudad where ciudad_nombre = RUTA_AEREA_CIU_ORIG),
 			(SELECT ciudad_id from CUARENTENA2020.Ciudad where ciudad_nombre = RUTA_AEREA_CIU_DEST) 
 		FROM gd_esquema.Maestra 
 		WHERE RUTA_AEREA_CODIGO IS NOT NULL
-	SET IDENTITY_INSERT CUARENTENA2020.Ruta OFF
+		order by RUTA_AEREA_CODIGO
+
 ----------------------------------------------------------------------------------------
     CREATE TABLE CUARENTENA2020.Avion (
         avion_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
@@ -119,7 +121,7 @@ BEGIN
         cliente_telefono INT NULL,
     )
     INSERT INTO CUARENTENA2020.Cliente 
-		SELECT DISTINCT CLIENTE_APELLIDO,CLIENTE_NOMBRE,CLIENTE_DNI,CLIENTE_FECHA_NAC,CLIENTE_MAIL,CLIENTE_TELEFONO 
+		SELECT CLIENTE_APELLIDO,CLIENTE_NOMBRE,CLIENTE_DNI,CLIENTE_FECHA_NAC,CLIENTE_MAIL,CLIENTE_TELEFONO 
 		FROM gd_esquema.Maestra
 		where CLIENTE_DNI is not null
 ----------------------------------------------------------------------------------------
@@ -138,7 +140,7 @@ BEGIN
 			venta_cliente,
 			venta_sucursal
 		)
-		SELECT distinct 
+		SELECT distinct
 			FACTURA_NRO,
 			FACTURA_FECHA,
 			c.cliente_id,
@@ -147,6 +149,7 @@ BEGIN
 		join CUARENTENA2020.Cliente c on c.cliente_dni = m.CLIENTE_DNI
 		join CUARENTENA2020.Sucursal s on s.sucursal_dir = m.SUCURSAL_DIR
 		where FACTURA_NRO is not null
+
 	SET IDENTITY_INSERT CUARENTENA2020.Venta OFF
 ----------------------------------------------------------------------------------------
     
@@ -154,7 +157,7 @@ BEGIN
         vuelo_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
         vuelo_fecha_salida DATETIME2(3) NOT NULL,
         vuelo_fecha_llegada DATETIME2(3) NOT NULL,
-        vuelo_ruta INT REFERENCES CUARENTENA2020.Ruta,
+        vuelo_ruta INT,
         vuelo_avion INT REFERENCES CUARENTENA2020.Avion
     )
 
@@ -185,6 +188,10 @@ BEGIN
 
 	SET IDENTITY_INSERT CUARENTENA2020.CompraPasaje ON
 	insert into CUARENTENA2020.CompraPasaje
+		(
+			compra_pasaje_id,
+			compra_pasaje_vuelo
+		)
 		select distinct 
 			COMPRA_NUMERO, 
 			VUELO_CODIGO
@@ -213,27 +220,29 @@ BEGIN
 	SET IDENTITY_INSERT CUARENTENA2020.TipoHabitacion OFF
 ----------------------------------------------------------------------------------------
     CREATE TABLE CUARENTENA2020.Habitacion(
-        habitacion_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),    
-        habitacion_numero DECIMAL(18,0) NULL,
-        habitacion_piso DECIMAL(18,0) NULL,
-        habitacion_frente NVARCHAR(50) NULL,
-        habitacion_costo DECIMAL(18,2) NULL,
-        habitacion_precio DECIMAL(18,2) NULL,
-        habitacion_tipo INT REFERENCES CUARENTENA2020.TipoHabitacion,
-        hotel_id INT REFERENCES CUARENTENA2020.Hotel
+        habitacion_id INT PRIMARY KEY NOT NULL IDENTITY(1,1), 
+		--habitacion_hotel INT REFERENCES CUARENTENA2020.Hotel,
+        habitacion_numero DECIMAL(18,0) NOT NULL,
+        habitacion_piso DECIMAL(18,0) NOT NULL,
+        habitacion_frente NVARCHAR(50) NOT NULL,
+        habitacion_costo DECIMAL(18,2) NOT NULL,
+        habitacion_precio DECIMAL(18,2) NOT NULL,
+        habitacion_tipo INT REFERENCES CUARENTENA2020.TipoHabitacion
     )
     
-    INSERT INTO CUARENTENA2020.Habitacion 
-		SELECT 
+    INSERT INTO CUARENTENA2020.Habitacion
+		SELECT distinct
 			HABITACION_NUMERO,
 			HABITACION_PISO,
 			HABITACION_FRENTE,
 			HABITACION_COSTO,
 			HABITACION_PRECIO,
-			TIPO_HABITACION_CODIGO,
-			TIPO_HABITACION_DESC 
-		FROM gd_esquema.Maestra
-		where HABITACION_NUMERO is not null
+			TIPO_HABITACION_CODIGO
+		FROM gd_esquema.Maestra m
+		join CUARENTENA2020.Hotel h on h.hotel_calle = m.HOTEL_CALLE and h.hotel_nro_calle = m.HOTEL_NRO_CALLE 
+		where 
+			HABITACION_NUMERO is not null
+			and h.hotel_id is not null
 ----------------------------------------------------------------------------------------
     
     CREATE TABLE CUARENTENA2020.Estadia(
@@ -294,8 +303,8 @@ END
 GO
 
 EXEC pr_crear_tablas;
-go
-------------------------------------------------------------------------------------------
+GO
+
 --Indices 
 
 CREATE INDEX index_avion 
@@ -313,4 +322,3 @@ GO
 CREATE INDEX index_hotel
 ON [CUARENTENA2020].[hotel] (hotel_cantidad_estrellas)
 GO
-
