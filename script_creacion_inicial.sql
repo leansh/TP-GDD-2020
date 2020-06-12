@@ -331,12 +331,19 @@ BEGIN
 
 ----------------------------------------------------------------------------------------    
 	CREATE TABLE CUARENTENA2020.VentaPasaje(
-		id_ven_pas INT PRIMARY KEY NOT NULL IDENTITY(1,1),
-		precio DECIMAL(18,2),
 		id_com_pas INT REFERENCES CUARENTENA2020.CompraPasaje,
 		id_venta INT REFERENCES CUARENTENA2020.Venta
 	)
-    
+
+	insert into CUARENTENA2020.VentaPasaje
+		select distinct
+			COMPRA_NUMERO,
+			FACTURA_NRO
+		from gd_esquema.Maestra m
+		join CUARENTENA2020.CompraPasaje cp on cp.compra_pasaje_id = m.COMPRA_NUMERO
+		where COMPRA_NUMERO is not null and FACTURA_NRO is not null
+
+----------------------------------------------------------------------------------------
 	CREATE TABLE CUARENTENA2020.CompraEstadia(
 		compra_estadia_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
 		id_estadia INT REFERENCES CUARENTENA2020.Estadia
