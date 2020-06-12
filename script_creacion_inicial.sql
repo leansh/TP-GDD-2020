@@ -6,13 +6,13 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-IF OBJECT_ID('pr_crear_tablas') IS NULL
+IF OBJECT_ID('pr_generar_base_de_datos_normalizada') IS NULL
 BEGIN
-	EXEC('CREATE PROCEDURE pr_crear_tablas AS SET NOCOUNT ON;')
+	EXEC('CREATE PROCEDURE pr_generar_base_de_datos_normalizada AS SET NOCOUNT ON;')
 END
 GO
 
-ALTER PROCEDURE [dbo].[pr_crear_tablas] 
+CREATE PROCEDURE pr_generar_base_de_datos_normalizada
 AS
 
 BEGIN
@@ -401,7 +401,7 @@ BEGIN
 END
 GO
 
-EXEC pr_crear_tablas;
+EXEC pr_generar_base_de_datos_normalizada;
 GO
 
 --Indices 
@@ -414,10 +414,26 @@ CREATE INDEX index_Cliente
 ON [CUARENTENA2020].[Cliente] (cliente_dni , cliente_mail)
 GO
 
-CREATE INDEX index_empresa
-ON [CUARENTENA2020].[empresa] (empresa_razon_social)
+CREATE INDEX index_hotel
+ON [CUARENTENA2020].[Hotel] (hotel_cantidad_estrellas)
 GO
 
-CREATE INDEX index_hotel
-ON [CUARENTENA2020].[hotel] (hotel_cantidad_estrellas)
+CREATE INDEX index_sucursal
+ON [CUARENTENA2020].[Sucursal] (sucursal_telefono)
+GO
+
+CREATE INDEX index_ruta_aerea
+ON [CUARENTENA2020].[Ruta] (ruta_aerea_codigo)
+GO
+
+CREATE INDEX index_vuelo
+ON [CUARENTENA2020].[Vuelo] (vuelo_codigo)
+GO
+
+CREATE INDEX index_estadia
+ON [CUARENTENA2020].[Estadia] (estadia_codigo)
+GO
+
+CREATE INDEX index_pasaje
+ON [CUARENTENA2020].[Pasaje] (pasaje_codigo)
 GO
