@@ -384,6 +384,20 @@ BEGIN
 		id_habitacion INT REFERENCES CUARENTENA2020.Habitacion,
 		id_estadia INT REFERENCES CUARENTENA2020.Estadia
 	)
+	insert into CUARENTENA2020.Estadia_X_Habitacion
+		select distinct
+			h.habitacion_id,
+			e.estadia_codigo
+		from gd_esquema.Maestra m
+		join CUARENTENA2020.Hotel ho on 
+			ho.hotel_calle = m.HOTEL_CALLE and 
+			ho.hotel_nro_calle = m.HOTEL_NRO_CALLE
+		join CUARENTENA2020.Habitacion h on 
+			h.habitacion_hotel = ho.hotel_id and
+			h.habitacion_numero = m.HABITACION_NUMERO and
+			h.habitacion_piso = m.HABITACION_PISO
+		join CUARENTENA2020.Estadia e on e.estadia_codigo = m.ESTADIA_CODIGO
+			
 END
 GO
 
