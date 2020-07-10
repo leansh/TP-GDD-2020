@@ -62,31 +62,20 @@ CREATE TABLE CUARENTENA2020_BI.TipoHabitacion(
 		habitacion_numero DECIMAL(18,0),
         habitacion_piso DECIMAL(18,0),
         habitacion_frente NVARCHAR(50),
+		habitacion_costo DECIMAL(18,2),
+        habitacion_precio DECIMAL(18,2),
     )
 
------------------------------------------------------------------------------
-CREATE TABLE CUARENTENA2020_BI.Habitacion(
-        habitacion_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
-        habitacion_costo DECIMAL(18,2),
-        habitacion_precio DECIMAL(18,2),
-		tipo_habitacion_codigo DECIMAL(18,0) REFERENCES CUARENTENA2020_BI.TipoHabitacion
-    )
 
 -------------------------------------------------------------------------------
 CREATE TABLE CUARENTENA2020_BI.Tipo_Pasaje(
-		tipo_pasaje_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
-        BUTACA_NUMERO DECIMAL(18, 0),
-        BUTACA_TIPO nvarchar(255) NOT NULL
-
-)
-
---------------------------------------------------------------------------------
-CREATE TABLE CUARENTENA2020_BI.Pasaje(
 		pasaje_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
-        pasaje_codigo DECIMAL(18, 0) NOT NULL,
+        BUTACA_NUMERO DECIMAL(18, 0),
+        BUTACA_TIPO nvarchar(255) NOT NULL,
+		pasaje_codigo DECIMAL(18, 0) NOT NULL,
         pasaje_costo DECIMAL(18, 2) NOT NULL,
-        pasaje_precio DECIMAL(18, 2) NOT NULL,
-		tipo_pasaje_id INT REFERENCES CUARENTENA2020_BI.Tipo_Pasaje
+        pasaje_precio DECIMAL(18, 2) NOT NULL
+
 )
 
 --------------------------------------------------------------------------------
