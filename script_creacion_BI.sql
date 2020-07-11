@@ -3,6 +3,7 @@ GO
 
 
 CREATE SCHEMA [CUARENTENA2020_BI] AUTHORIZATION [dbo]
+GO
 
 --------------------------------------------------------------------------
 CREATE TABLE CUARENTENA2020_BI.Proveedor(
@@ -44,6 +45,8 @@ CREATE TABLE CUARENTENA2020_BI.Ciudad (
 		ciudad_nombre nvarchar(255)
 )
 
+INSERT INTO CUARENTENA2020_BI.Ciudad
+	SELECT ciudad_nombre FROM CUARENTENA2020.Ciudad
 ---------------------------------------------------------------------------
 
 CREATE TABLE CUARENTENA2020_BI.Ruta (
@@ -52,6 +55,12 @@ CREATE TABLE CUARENTENA2020_BI.Ruta (
 		ruta_aerea_ciu_orig NVARCHAR(255),
 		ruta_aerea_ciu_dest NVARCHAR(255)
 	)
+
+INSERT INTO CUARENTENA2020_BI.Ruta
+	SELECT ruta_aerea_codigo, c1.ciudad_id, c2.ciudad_id
+	FROM CUARENTENA2020.Ruta r
+	JOIN CUARENTENA2020.Ciudad c1 on c1.ciudad_id = r.ruta_aerea_ciu_orig
+	JOIN CUARENTENA2020.Ciudad c2 on c2.ciudad_id = r.ruta_aerea_ciu_dest
 
 ----------------------------------------------------------------------------
 
@@ -67,14 +76,12 @@ SET IDENTITY_INSERT CUARENTENA2020_BI.Tipo_Habitacion OFF
 -------------------------------------------------------------------------------
 CREATE TABLE CUARENTENA2020_BI.Tipo_Pasaje(
 		pasaje_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
-        BUTACA_NUMERO DECIMAL(18, 0),
-        BUTACA_TIPO nvarchar(255) NOT NULL,
-		pasaje_codigo DECIMAL(18, 0) NOT NULL,
-        pasaje_costo DECIMAL(18, 2) NOT NULL,
-        pasaje_precio DECIMAL(18, 2) NOT NULL
-
+        BUTACA_TIPO nvarchar(255) NOT NULL
 )
 
+INSERT INTO CUARENTENA2020_BI.Tipo_Pasaje
+	SELECT tipo_butaca_descripcion
+	FROM CUARENTENA2020.TipoButaca
 --------------------------------------------------------------------------------
 
 CREATE TABLE CUARENTENA2020_BI.Hechos_Estadia(
