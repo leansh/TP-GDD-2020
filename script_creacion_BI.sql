@@ -1,6 +1,7 @@
 USE [GD1C2020]
 GO
 
+
 CREATE SCHEMA [CUARENTENA2020_BI] AUTHORIZATION [dbo]
 
 --------------------------------------------------------------------------
@@ -8,18 +9,22 @@ CREATE TABLE CUARENTENA2020_BI.Proveedor(
 	empresa_id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
     empresa_razon_social nvarchar(255) NOT NULL,
 )
-
+INSERT INTO CUARENTENA2020_BI.Proveedor
+SELECT empresa_id,empresa_razon_social FROM CUARENTENA2020.Empresa
 --------------------------------------------------------------------------
 CREATE TABLE CUARENTENA2020_BI.Cliente(
-cliente_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
+		cliente_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
         cliente_apellido NVARCHAR(255) NULL,
         cliente_nombre NVARCHAR(255) NULL,
         cliente_dni DECIMAL(18,0) NULL,
         cliente_fecha_nac DATETIME2(3) NULL,
-		cliente_edad INT NULL,
         cliente_mail NVARCHAR(255) NULL,
         cliente_telefono INT NULL,
+		cliente_edad INT NULL,
 )
+
+INSERT INTO CUARENTENA2020_BI.Cliente (cliente_id,cliente_apellido,cliente_nombre,cliente_dni,cliente_fecha_nac,cliente_mail,cliente_telefono,cliente_edad)
+SELECT cliente_id,cliente_apellido,cliente_nombre,cliente_dni,cliente_fecha_nac,cliente_mail,cliente_telefono, DATEDIFF(yy,cliente_fecha_nac,GETDATE()) FROM CUARENTENA2020.Cliente
 
 --------------------------------------------------------------------------
 
@@ -30,6 +35,8 @@ CREATE TABLE CUARENTENA2020_BI.Avion(
 
 )
 
+INSERT INTO CUARENTENA2020_BI.Avion
+SELECT avion_id,avion_identificador,avion_modelo FROM CUARENTENA2020.Avion
 --------------------------------------------------------------------------
 
 CREATE TABLE CUARENTENA2020_BI.Ciudad (
@@ -57,8 +64,11 @@ CREATE TABLE CUARENTENA2020_BI.Tipo_Habitacion(
 		habitacion_costo DECIMAL(18,2),
         habitacion_precio DECIMAL(18,2),
     )
-
-
+SET IDENTITY_INSERT CUARENTENA2020_BI.Tipo_Habitacion ON
+INSERT INTO CUARENTENA2020_BI.Tipo_Habitacion
+SELECT tipo_habitacion_codigo,tipo_habitacion_desc,habitacion_numero,habitacion_piso,habitacion_frente,habitacion_costo,habitacion_precio
+FROM CUARENTENA2020.Habitacion h JOIN CUARENTENA2020.TipoHabitacion t ON t.tipo_habitacion_codigo = h.habitacion_tipo
+SET IDENTITY_INSERT CUARENTENA2020_BI.Tipo_Habitacion OFF
 -------------------------------------------------------------------------------
 CREATE TABLE CUARENTENA2020_BI.Tipo_Pasaje(
 		pasaje_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
