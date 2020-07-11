@@ -58,16 +58,11 @@ CREATE TABLE CUARENTENA2020_BI.Ruta (
 CREATE TABLE CUARENTENA2020_BI.Tipo_Habitacion(
         tipo_habitacion_codigo DECIMAL(18,0) PRIMARY KEY NOT NULL IDENTITY(1,1),  
         tipo_habitacion_desc NVARCHAR(50) NULL,
-		habitacion_numero DECIMAL(18,0),
-        habitacion_piso DECIMAL(18,0),
-        habitacion_frente NVARCHAR(50),
-		habitacion_costo DECIMAL(18,2),
-        habitacion_precio DECIMAL(18,2),
     )
 SET IDENTITY_INSERT CUARENTENA2020_BI.Tipo_Habitacion ON
 INSERT INTO CUARENTENA2020_BI.Tipo_Habitacion
-SELECT tipo_habitacion_codigo,tipo_habitacion_desc,habitacion_numero,habitacion_piso,habitacion_frente,habitacion_costo,habitacion_precio
-FROM CUARENTENA2020.Habitacion h JOIN CUARENTENA2020.TipoHabitacion t ON t.tipo_habitacion_codigo = h.habitacion_tipo
+SELECT tipo_habitacion_codigo,tipo_habitacion_desc
+FROM CUARENTENA2020.TipoHabitacion
 SET IDENTITY_INSERT CUARENTENA2020_BI.Tipo_Habitacion OFF
 -------------------------------------------------------------------------------
 CREATE TABLE CUARENTENA2020_BI.Tipo_Pasaje(
