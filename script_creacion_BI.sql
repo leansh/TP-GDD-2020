@@ -23,14 +23,6 @@ cliente_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
 
 --------------------------------------------------------------------------
 
-CREATE TABLE CUARENTENA2020_BI.Fecha(
-		fecha_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
-		anio NUMERIC(4),
-		mes NUMERIC(2)
-)
-
---------------------------------------------------------------------------
-
 CREATE TABLE CUARENTENA2020_BI.Avion(
 		avion_id INT PRIMARY KEY NOT NULL IDENTITY(1,1),
         avion_identificador nvarchar(50),    
@@ -56,7 +48,7 @@ CREATE TABLE CUARENTENA2020_BI.Ruta (
 
 ----------------------------------------------------------------------------
 
-CREATE TABLE CUARENTENA2020_BI.TipoHabitacion(
+CREATE TABLE CUARENTENA2020_BI.Tipo_Habitacion(
         tipo_habitacion_codigo DECIMAL(18,0) PRIMARY KEY NOT NULL IDENTITY(1,1),  
         tipo_habitacion_desc NVARCHAR(50) NULL,
 		habitacion_numero DECIMAL(18,0),
@@ -81,15 +73,17 @@ CREATE TABLE CUARENTENA2020_BI.Tipo_Pasaje(
 --------------------------------------------------------------------------------
 
 CREATE TABLE CUARENTENA2020_BI.Hechos_Estadia(
-		fecha_id INT REFERENCES CUARENTENA2020_BI.Fecha,
 		empresa_id INT REFERENCES CUARENTENA2020_BI.Proveedor,
-		habitacion_id INT REFERENCES CUARENTENA2020_BI.Habitacion,
+		tipo_habitacion_codigo DECIMAL(18,0) REFERENCES CUARENTENA2020_BI.Tipo_Habitacion,
 		cliente_id INT REFERENCES CUARENTENA2020_BI.Cliente,
+		anio NUMERIC(4),
+		mes NUMERIC(2),
 		PRECIO_PROM_COMPRA DECIMAL(18,2),
 		PRECIO_PROM_VENTA DECIMAL(18,2),
 		CANT_CAMAS_VENDIDAS INT,
 		CANT_HAB_VENDIDAS INT,
-		GANANCIAS_ESTADIA DECIMAL(18,2)
+		GANANCIAS_ESTADIA DECIMAL(18,2),
+		PRIMARY KEY(empresa_id,tipo_habitacion_codigo,cliente_id,anio,mes)
 )
 
 ----------------------------------------------------------------------------------
@@ -100,11 +94,14 @@ CREATE TABLE CUARENTENA2020.Hechos_Pasaje(
 		avion_id INT REFERENCES CUARENTENA2020_BI.Avion,
 		empresa_id INT REFERENCES CUARENTENA2020_BI.Proveedor,
 		cliente_id INT REFERENCES CUARENTENA2020_BI.Cliente,
-		pasaje_id INT REFERENCES CUARENTENA2020_BI.Pasaje,
+		pasaje_id INT REFERENCES CUARENTENA2020_BI.Tipo_Pasaje,
+		anio NUMERIC(4),
+		mes NUMERIC(2),
 		PRECIO_PROM_COMPRA DECIMAL(18,2),
 		PRECIO_PROM_VENTA DECIMAL(18,2),
 		CANT_PASAJES_VENDIDOS INT,
-		GANANCIAS_PASAJE DECIMAL(18,2)
+		GANANCIAS_PASAJE DECIMAL(18,2),
+		PRIMARY KEY(ciudad_id,ruta_id,avion_id,empresa_id,cliente_id,pasaje_id,anio,mes)
 )
 
 ------------------------------------------------------------------------------------
