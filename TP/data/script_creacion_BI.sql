@@ -191,8 +191,24 @@ INSERT INTO CUARENTENA2020_BI.Hechos_Pasaje
 		c.compra_empresa,
 		venta.venta_cliente,
 		p.pasaje_tipo_butaca
-
-
-
 ------------------------------------------------------------------------------------
+GO
 
+CREATE VIEW Ganancias_2018
+AS
+SELECT anio,mes, GANANCIAS_PASAJE FROM CUARENTENA2020_BI.Hechos_Pasaje WHERE anio = 2018;
+GO
+
+CREATE VIEW [Pasajes Vendidos A Clientes Apellidados Moreno]
+AS
+SELECT cliente_nombre,cliente_apellido,CANT_PASAJES_VENDIDOS 
+FROM CUARENTENA2020_BI.Hechos_Pasaje h JOIN CUARENTENA2020_BI.Cliente c ON h.cliente_id = c.cliente_id
+WHERE cliente_apellido = 'Moreno'
+GO
+
+CREATE VIEW [Cantidad de camas vendidas a clientes mayores de 20]
+AS
+SELECT cliente_nombre,cliente_apellido,cliente_edad, CANT_CAMAS_VENDIDAS
+FROM CUARENTENA2020_BI.Hechos_Estadia h JOIN CUARENTENA2020_BI.Cliente c ON h.cliente_id = c.cliente_id
+WHERE cliente_edad > 20
+GO
