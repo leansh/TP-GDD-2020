@@ -95,25 +95,6 @@ INSERT INTO CUARENTENA2020_BI.Tipo_Pasaje (tipo_pasaje_id, butaca_tipo)
 	SELECT tipo_butaca_id, tipo_butaca_descripcion
 	FROM CUARENTENA2020.TipoButaca
 SET IDENTITY_INSERT CUARENTENA2020_BI.Tipo_Pasaje OFF
-
-----------------------------------------------------------------------------------
-CREATE TABLE CUARENTENA2020_BI.Fecha(
-	fecha_id INT PRIMARY KEY NOT NULL IDENTITY(1,1), 
-	fecha_anio NUMERIC(4),
-	fecha_mes NUMERIC(2)
-)
-
-INSERT INTO	CUARENTENA2020_BI.Fecha
-	SELECT distinct 
-		year(c.compra_fecha) anio, 
-		month(c.compra_fecha) mes
-	FROM CUARENTENA2020.Compra c
-	UNION
-	SELECT distinct 
-		year(v.venta_fecha), 
-		month(v.venta_fecha)
-	FROM CUARENTENA2020.Venta v
-	order by anio, mes
 --------------------------------------------------------------------------------
 
 CREATE TABLE CUARENTENA2020_BI.Hechos_Estadia(
@@ -133,30 +114,31 @@ CREATE TABLE CUARENTENA2020_BI.Hechos_Estadia(
 ----------------------------------------------------------------------------------
 
 CREATE TABLE CUARENTENA2020_BI.Hechos_Pasaje(
-	fecha_id INT REFERENCES CUARENTENA2020_BI.Fecha,
-	ruta_id INT REFERENCES CUARENTENA2020_BI.Ruta,
+	ruta_codigo INT, -- esta no es FK porque no es unico el codigo
 	avion_id INT REFERENCES CUARENTENA2020_BI.Avion,
 	empresa_id INT REFERENCES CUARENTENA2020_BI.Proveedor,
 	cliente_id INT REFERENCES CUARENTENA2020_BI.Cliente,
 	tipo_pasaje_id INT REFERENCES CUARENTENA2020_BI.Tipo_Pasaje,
+	anio INT,
+	mes INT,
 	PRECIO_PROM_COMPRA DECIMAL(18,2),
 	PRECIO_PROM_VENTA DECIMAL(18,2),
 	CANT_PASAJES_VENDIDOS INT,
 	GANANCIAS_PASAJE DECIMAL(18,2),
-	PRIMARY KEY(ruta_id,avion_id,empresa_id,cliente_id,tipo_pasaje_id)
+	PRIMARY KEY(ruta_codigo,avion_id,empresa_id,cliente_id,tipo_pasaje_id)
 )
 
 INSERT INTO CUARENTENA2020_BI.Hechos_Pasaje
 	SELECT 
-		--count(*)
-		f.fecha_id,
 		v.vuelo_ruta,
 		v.vuelo_avion,
 		c.compra_empresa,
 		venta.venta_cliente,
 		p.pasaje_tipo_butaca,
-		AVG(p.pasaje_costo) PRECIO_PROM_COMPRA,
-		AVG(p.pasaje_precio) PRECIO_PROM_VENTA,
+		year(venta.venta_fecha) as anio,
+		month(venta.venta_fecha) as mes,
+		AVG(p.pasaje_costo) as PRECIO_PROM_COMPRA,
+		AVG(p.pasaje_precio) as PRECIO_PROM_VENTA,
 		count(*) as CANT_PASAJES_VENDIDOS,
 		sum(p.pasaje_precio - p.pasaje_costo) as GANANCIAS_PASAJE
 	FROM CUARENTENA2020.Pasaje p
@@ -164,11 +146,11 @@ INSERT INTO CUARENTENA2020_BI.Hechos_Pasaje
 	JOIN CUARENTENA2020.CompraPasaje cp on cp.compra_pasaje_id = p.pasaje_compra_id
 	JOIN CUARENTENA2020.VentaPasaje vp on vp.id_pasaje = p.pasaje_codigo 
 	JOIN CUARENTENA2020.Venta venta on venta.venta_id = vp.id_venta
-	JOIN CUARENTENA2020_BI.Fecha f on f.fecha_anio = year(venta.venta_fecha) and f.fecha_mes = month(venta.venta_fecha)
 	JOIN CUARENTENA2020.Vuelo v on v.vuelo_codigo = cp.compra_pasaje_vuelo
 	--en cada fila quedan agrupados los que son del mismo mes/ruta/avion/empresa/cliente/tipo_butaca
 	group by 
-		f.fecha_id,
+		year(venta.venta_fecha),
+		month(venta.venta_fecha),
 		v.vuelo_ruta,
 		v.vuelo_avion,
 		c.compra_empresa,

@@ -29,6 +29,8 @@ END
 
 IF (SCHEMA_ID('CUARENTENA2020_BI') IS NOT NULL) 
 BEGIN
+	drop table CUARENTENA2020_BI.Hechos_Pasaje
+	drop table CUARENTENA2020_BI.Hechos_Estadia
 	drop table CUARENTENA2020_BI.Avion
 	drop table CUARENTENA2020_BI.Ciudad
 	drop table CUARENTENA2020_BI.Cliente
@@ -36,6 +38,5 @@ BEGIN
 	drop table CUARENTENA2020_BI.Ruta
 	drop table CUARENTENA2020_BI.Tipo_habitacion
 	drop table CUARENTENA2020_BI.Tipo_Pasaje
-	drop table CUARENTENA2020_BI.Fecha
 	drop schema CUARENTENA2020_BI
 END
